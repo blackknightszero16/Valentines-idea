@@ -52,14 +52,23 @@ body::before{
   box-shadow:0 30px 60px rgba(0,0,0,.25);
 }
 
-h1{
-  font-family:Pacifico,cursive;
-  font-size:3.0rem;
-  margin-bottom:25px;
-  background:linear-gradient(124deg,var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:float 3s ease-in-out infinite;
+h1 {
+  font-family: Pacifico, cursive;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+  animation: float 3s ease-in-out infinite;
+  /* This shadow creates a "border" so the light colors stand out */
+  text-shadow: 2px 2px 10px rgba(107, 78, 255, 0.3); 
+  line-height: 1.4;
+}
+
+.gradient-text {
+  /* Using slightly deeper shades of your blue and purple for readability */
+  background: linear-gradient(124deg, #4ea8ff, #9d50bb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline;
+  font-weight: bold;
 }
 
 @keyframes float{
@@ -100,62 +109,85 @@ button{
 }
 
 /* 💙💜 Heart shower */
-.heart{
-  position:fixed;
-  top:-30px;
-  font-size:28px;
-  animation:fall linear forwards;
+.heart {
+  position: fixed;
+  top: -30px;
+  /* Higher z-index than the envelope (which is 10) */
+  z-index: 20; 
+  font-size: 28px;
+  animation: fall linear forwards;
+  pointer-events: none; /* So you can still click things through the shower */
 }
 
 @keyframes fall{
   to{transform:translateY(110vh);opacity:0}
 }
 
-/* 💌 Love letter envelope */
-.envelope{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(120deg,var(--blue),var(--purple));
-  animation:fadeIn 1s forwards;
-  z-index:5;
+/* Container for the whole envelope */
+.envelope {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  animation: fadeIn 0.5s forwards;
 }
 
-.mail{
-  width:260px;
-  height:180px;
-  background:white;
-  border-radius:10px;
-  position:relative;
-  overflow:hidden;
+.mail {
+  width: 320px;
+  height: 220px;
+  background: #fff;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  overflow: hidden; /* This keeps the letter hidden inside */
 }
 
-.flap{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:linear-gradient(135deg,var(--blue),var(--purple));
-  clip-path:polygon(0 0,100% 0,50% 60%);
-  animation:openFlap 1.5s forwards;
+/* The flap that opens first */
+.flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%; /* Just the top half */
+  background: #f2f2f2;
+  border: 1px solid #ddd;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  z-index: 3;
+  transition: transform 0.8s ease-in;
+  transform-origin: top;
 }
 
-.letter{
-  position:absolute;
-  bottom:-100%;
-  width:100%;
-  height:100%;
-  background:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:Pacifico,cursive;
-  font-size:2.2rem;
-  color:#6b4eff;
-  animation:letterUp 2s 1s forwards;
+/* The actual paper inside */
+.letter {
+  position: absolute;
+  bottom: -100%; /* Start completely hidden below the envelope */
+  left: 5%;
+  width: 90%;
+  height: 85%;
+  background: #fff;
+  border: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Pacifico, cursive;
+  font-size: 1.8rem;
+  color: #6b4eff;
+  z-index: 2;
+  /* Wait for flap (0.8s) before starting to move up */
+  transition: bottom 1s ease-out 0.8s; 
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+}
+
+/* Triggered classes */
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+.envelope.open .letter {
+  bottom: 10%; /* Slide up into view */
 }
 
 @keyframes openFlap{
@@ -180,7 +212,10 @@ button{
 </audio>
 
 <div class="container">
-  <h1>Will you be my Valentine my Bebi Wifey? 😁👉👈💙💜</h1>
+  <h1>
+    <span class="gradient-text">Will you be my Valentine my Bebi Wifey?</span> 
+    <br> 😁👉👈💙💜
+  </h1>
   <img id="gif" src="Yes.gif">
 
   <div class="buttons">
@@ -197,39 +232,54 @@ const music=document.getElementById("bgMusic");
 
 let clicks=0;
 
-const noGifs=["NO1.gif","NO2.gif","NO3.gif","NO5.gif"];
+const noGifs=["NO1.gif","NO2.gif","NO3.gif ","NO4.gif","NO5.gif"];
 
 document.body.addEventListener("click",()=>music.play(),{once:true});
 
-function heartShower(){
-  for(let i=0;i<45;i++){
-    const h=document.createElement("div");
-    h.className="heart";
-    h.innerHTML=Math.random()>.5?"💙":"💜";
-    h.style.left=Math.random()*100+"vw";
-    h.style.animationDuration=(2+Math.random()*2)+"s";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),4000);
+function heartShower(amount = 45) {
+  const icons = ["💙", "💜", "🌸", "🌹", "✨"];
+  for (let i = 0; i < amount; i++) {
+    createIcon(icons);
   }
 }
 
-yesBtn.onclick=()=>{
-  gif.style.display="block";
-  gif.src="Yes.gif";
-  heartShower();
+function createIcon(icons) {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+  h.style.left = Math.random() * 100 + "vw";
+  // Random speeds for a natural feel
+  h.style.animationDuration = (2 + Math.random() * 3) + "s";
+  h.style.fontSize = (15 + Math.random() * 25) + "px";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 5000);
+}
 
-  setTimeout(()=>{
-    const env=document.createElement("div");
-    env.className="envelope";
-    env.innerHTML=`
+yesBtn.onclick = () => {
+  gif.style.display = "block";
+  gif.src = "Yes.gif";
+  
+  heartShower(60);
+
+  const continuousShower = setInterval(() => {
+    createIcon(["💙", "💜", "🌸", "🌹", "✨"]);
+  }, 300);
+
+  setTimeout(() => {
+    const env = document.createElement("div");
+    env.className = "envelope"; 
+    env.innerHTML = `
       <div class="mail">
         <div class="flap"></div>
-        <div class="letter"> I love you!! 😍😘💙💜</div>
+        <div class="letter"> Yey!! I love you my Bebi Wifey!! 💙💜</div>
       </div>`;
     document.body.appendChild(env);
-    heartShower();
-  },1200);
+    
+    // Start the animation sequence
+    setTimeout(() => env.classList.add("open"), 100);
+  }, 3500); 
 };
+
 
 noBtn.onclick=()=>{
   clicks++;
@@ -249,6 +299,7 @@ noBtn.onclick=()=>{
 
 </body>
 </html>
+
 
 
 
