@@ -113,13 +113,13 @@ button{
 
 /* 💌 Love letter envelope */
 .envelope{
-  position:fixed;
+  position:center;
   inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
   background:linear-gradient(120deg,var(--blue),var(--purple));
-  animation:fadeIn 1s forwards;
+  animation:fadeIn 2s forwards;
   z-index:5;
 }
 
@@ -215,7 +215,7 @@ function heartShower(){
 
 yesBtn.onclick=()=>{
   gif.style.display="block";
-  gif.src="yes.gif";
+  gif.src="Yes.gif";
   heartShower();
 
   setTimeout(()=>{
@@ -249,5 +249,6 @@ noBtn.onclick=()=>{
 
 </body>
 </html>
+
 
 
