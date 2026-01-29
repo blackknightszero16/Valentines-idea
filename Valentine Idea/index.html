@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Be My Valentine 💙💜</title>
+
+  <style>
+    :root {
+      --baby-blue: #b8e7ff;
+      --baby-purple: #e3c6ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      /* 🔽 PUT YOUR BACKGROUND IMAGE HERE */
+      background-image: url("BG.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(12px);
+      padding: 30px 20px;
+      border-radius: 20px;
+      text-align: center;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, var(--baby-blue), var(--baby-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: floatText 3s ease-in-out infinite;
+    }
+
+    @keyframes floatText {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .gif-container img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      position: relative;
+      height: 60px;
+    }
+
+    button {
+      padding: 12px 25px;
+      border-radius: 30px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    #yesBtn {
+      background: linear-gradient(90deg, var(--baby-blue), var(--baby-purple));
+      font-weight: bold;
+      z-index: 2;
+    }
+
+    #noBtn {
+      background: white;
+      z-index: 1;
+    }
+
+    /* 💙 BIG HEART */
+    .heart {
+      position: fixed;
+      font-size: 120px;
+      color: #4da6ff;
+      animation: pop 1s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* 😭 CRY EMOJI */
+    .cry {
+      position: fixed;
+      font-size: 40px;
+      animation: cryPop 1.2s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes cryPop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+
+    /* 💙 HEART RAIN */
+    .heart-rain {
+      position: fixed;
+      top: -40px;
+      font-size: 30px;
+      animation: fall linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🎵 BACKGROUND MUSIC (PUT YOUR MUSIC FILE HERE) -->
+  <audio id="bgMusic" loop>
+    <source src="Until I Found You (Em Beihold Version).mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <h1>Will you be my Valentine? 💕</h1>
+
+    <div class="gif-container">
+      <!-- 💙 YES GIF -->
+      <img id="gif" src="Yes.gif">
+    </div>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes 💙</button>
+      <button id="noBtn">No sorry 😢</button>
+    </div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const gif = document.getElementById("gif");
+    const music = document.getElementById("bgMusic");
+
+    let noClicks = 0;
+    let yesScale = 1;
+
+    /* 😢 NO CLICK GIFS (1–5) */
+    const noGifs = [
+      "NO1.gif",
+      "NO2.gif",
+      "NO3.gif",
+      "NO4.gif",
+      "NO5.gif"
+    ];
+
+    /* 🎵 Start music after first interaction */
+    document.body.addEventListener("click", () => {
+      music.play();
+    }, { once: true });
+
+    function heartRain() {
+      for (let i = 0; i < 30; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart-rain";
+        heart.innerHTML = "💙";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (2 + Math.random() * 2) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }
+    }
+
+    yesBtn.addEventListener("click", () => {
+      yesScale = 1;
+      noClicks = 0;
+      yesBtn.style.transform = "scale(1)";
+      gif.src = "yes.gif";
+
+      const bigHeart = document.createElement("div");
+      bigHeart.className = "heart";
+      bigHeart.innerHTML = "💙";
+      bigHeart.style.left = "50%";
+      bigHeart.style.top = "50%";
+      bigHeart.style.transform = "translate(-50%, -50%)";
+      document.body.appendChild(bigHeart);
+      setTimeout(() => bigHeart.remove(), 1000);
+
+      heartRain();
+    });
+
+    noBtn.addEventListener("click", () => {
+      noClicks++;
+
+      gif.src = noGifs[noClicks - 1] || gif.src;
+
+      const cry = document.createElement("div");
+      cry.className = "cry";
+      cry.innerHTML = "😭";
+      cry.style.left = Math.random() * 80 + "%";
+      cry.style.top = Math.random() * 80 + "%";
+      document.body.appendChild(cry);
+      setTimeout(() => cry.remove(), 1200);
+
+      if (noClicks < 5) {
+        yesScale += 0.8;
+        yesBtn.style.transform = `scale(${yesScale})`;
+      }
+
+      /* 😈 FINAL CLICK → NO BUTTON RUNS AWAY */
+      if (noClicks === 5) {
+        noBtn.style.position = "fixed";
+        setInterval(() => {
+          noBtn.style.left = Math.random() * 85 + "%";
+          noBtn.style.top = Math.random() * 85 + "%";
+        }, 400);
+      }
+    });
+  </script>
+
+</body>
+</html>
